@@ -1,0 +1,154 @@
+{
+  "announcements": [
+    {
+      "id": "1",
+      "text": "Mersin Cumhuriyet Platformu üyelik başvuruları başlamıştır!",
+      "active": true,
+      "createdAt": "2026-06-01"
+    },
+    {
+      "id": "2",
+      "text": "23 Nisan çocuk şenliği etkinliğimize tüm çocukları bekliyoruz.",
+      "active": true,
+      "createdAt": "2026-05-15"
+    }
+  ],
+  "events": [
+    {
+      "id": "1",
+      "title": "Cumhuriyet Değerleri Söyleşisi",
+      "description": "Cumhuriyetin temel değerleri üzerine panel ve söyleşi programı.",
+      "date": "2026-06-15",
+      "location": "Mersin Kültür Merkezi"
+    },
+    {
+      "id": "2",
+      "title": "Atatürk'ü Anma Programı",
+      "description": "10 Kasım anma töreni ve anma programı.",
+      "date": "2026-11-10",
+      "location": "Atatürk Parkı, Mersin"
+    },
+    {
+      "id": "3",
+      "title": "Gençlik Buluşması",
+      "description": "Gençlerle cumhuriyet değerlerini konuşuyoruz.",
+      "date": "2026-07-20",
+      "location": "Mersin Üniversitesi Konferans Salonu"
+    }
+  ],
+  "news": [
+    {
+      "id": "1",
+      "title": "Platform Resmi Olarak Kuruldu",
+      "excerpt": "Mersin Cumhuriyet Platformu, cumhuriyet değerlerini yaşatmak amacıyla kuruldu.",
+      "content": "Mersin Cumhuriyet Platformu, cumhuriyet değerlerini korumak ve yaşatmak amacıyla bir araya gelen vatandaşlarımız tarafından kurulmuştur.",
+      "date": "2026-05-01"
+    },
+    {
+      "id": "2",
+      "title": "İlk Genel Kurul Toplantısı Yapıldı",
+      "excerpt": "Platformun ilk genel kurul toplantısı yoğun katılımla gerçekleşti.",
+      "content": "Mersin Cumhuriyet Platformu'nun ilk genel kurul toplantısı büyük bir katılımla gerçekleştirildi.",
+      "date": "2026-05-20"
+    },
+    {
+      "id": "3",
+      "title": "Eğitim Semineri Düzenlendi",
+      "excerpt": "Cumhuriyet tarihi üzerine eğitim semineri düzenlendi.",
+      "content": "Platformumuz tarafından düzenlenen cumhuriyet tarihi eğitim seminerine çok sayıda katılımcı iştirak etti.",
+      "date": "2026-06-01"
+    }
+  ],
+  "projects": [
+    {
+      "id": "1",
+      "title": "Cumhuriyet Okuryazarlığı Projesi",
+      "description": "Okullarda cumhuriyet değerleri eğitimi verilmesi amacıyla yürütülen proje.",
+      "status": "devam-ediyor"
+    },
+    {
+      "id": "2",
+      "title": "Gençlik Liderlik Programı",
+      "description": "Gençlere liderlik ve sivil toplum bilinci kazandırmayı hedefleyen program.",
+      "status": "planlaniyor"
+    },
+    {
+      "id": "3",
+      "title": "Mersin Kültür Mirası Araştırması",
+      "description": "Mersin'in cumhuriyet dönemi kültür mirasının belgelenmesi projesi.",
+      "status": "tamamlandi"
+    }
+  ],
+  "press": [
+    {
+      "id": "1",
+      "title": "Mersin'de Yeni Bir Sivil Toplum Hareketi",
+      "source": "Mersin Haber",
+      "date": "2026-05-02",
+      "url": "#"
+    },
+    {
+      "id": "2",
+      "title": "Cumhuriyet Değerleri Platformu Kuruldu",
+      "source": "Yeni Mersin",
+      "date": "2026-05-05",
+      "url": "#"
+    }
+  ],
+  "publications": [
+    {
+      "id": "1",
+      "title": "Mersin Cumhuriyet Platformu Tüzüğü",
+      "description": "Platform tüzüğünün tam metni.",
+      "type": "dokuman",
+      "date": "2026-05-01"
+    },
+    {
+      "id": "2",
+      "title": "Cumhuriyet Değerleri El Kitabı",
+      "description": "Temel cumhuriyet değerlerini anlatan bilgilendirme kitabı.",
+      "type": "yayin",
+      "date": "2026-05-15"
+    }
+  ],
+  "team": [
+    {
+      "id": "1",
+      "name": "Uluhan Kale",
+      "role": "Başkan",
+      "bio": "Sivil toplum ve eğitim alanında 20 yıllık deneyime sahiptir."
+    }
+  ],
+  "members": [
+    {
+      "adSoyad": "deneme",
+      "telefon": "12315",
+      "eposta": "dsfsdf@sdf.cd",
+      "meslek": "123",
+      "yas": 55,
+      "ilce": "Silifke",
+      "id": "1780776575745-7lo66o3",
+      "createdAt": "2026-06-06T20:09:35.745Z",
+      "status": "beklemede"
+    }
+  ],
+  "about": {
+    "mission": "Mersin Cumhuriyet Platformu, Türkiye Cumhuriyeti'nin temel değerlerini korumak, yaşatmak ve gelecek nesillere aktarmak amacıyla kurulmuş bir sivil toplum örgütüdür.",
+    "vision": "Laik, demokratik ve çağdaş bir Türkiye Cumhuriyeti'nde, Mersin'in her köşesinde cumhuriyet değerlerinin yaşatıldığı bir toplum inşa etmek.",
+    "activities": [
+      "Cumhuriyet değerleri eğitimi ve seminerleri",
+      "Gençlik ve çocuk etkinlikleri",
+      "Kültür ve sanat programları",
+      "Sosyal sorumluluk projeleri",
+      "Kamuoyu bilinçlendirme çalışmaları"
+    ]
+  },
+  "settings": {
+    "liveAnnouncement": "Türkiye Cumhuriyeti'ne Sahip Çıkıyoruz! — Üyelik başvuruları devam ediyor.",
+    "contactEmail": "info@mersincumhuriyet.org",
+    "contactPhone": "+90 (324) 000 00 00",
+    "contactAddress": "Mersin, Türkiye",
+    "heroSubtitle": "Türkiye Cumhuriyeti'ne Sahip Çıkıyoruz!",
+    "heroDescription": "Cumhuriyet değerlerini korumak, yaşatmak ve gelecek nesillere aktarmak için bir araya geldik."
+  }
+}
