@@ -453,7 +453,11 @@ function NewsManager({ data, onAction }: { data: SiteData; onAction: ActionFn })
 }
 
 function ProjectsManager({ data, onAction }: { data: SiteData; onAction: ActionFn }) {
-  const empty = { title: "", description: "", status: "planlaniyor" as const };
+  const empty: { title: string; description: string; status: SiteData["projects"][number]["status"] } = {
+    title: "",
+    description: "",
+    status: "planlaniyor",
+  };
   const [form, setForm] = useState(empty);
   const [editing, setEditing] = useState<string | null>(null);
 
@@ -547,7 +551,19 @@ function PressManager({ data, onAction }: { data: SiteData; onAction: ActionFn }
 }
 
 function PublicationsManager({ data, onAction }: { data: SiteData; onAction: ActionFn }) {
-  const empty = { title: "", description: "", type: "dokuman" as const, date: new Date().toISOString().slice(0, 10), fileUrl: "" };
+  const empty: {
+    title: string;
+    description: string;
+    type: SiteData["publications"][number]["type"];
+    date: string;
+    fileUrl: string;
+  } = {
+    title: "",
+    description: "",
+    type: "dokuman",
+    date: new Date().toISOString().slice(0, 10),
+    fileUrl: "",
+  };
   const [form, setForm] = useState(empty);
   const [editing, setEditing] = useState<string | null>(null);
 
