@@ -3,12 +3,14 @@ import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import { readData } from "@/lib/db";
 
-export default function SiteLayout({
+export const dynamic = "force-dynamic";
+
+export default async function SiteLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const data = readData();
+  const data = await readData();
 
   return (
     <>

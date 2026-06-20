@@ -19,23 +19,23 @@ export async function POST(request: NextRequest) {
     }
 
     const buffer = Buffer.from(await file.arrayBuffer());
-    const result = saveTeamImage(buffer, file.type);
+    const result = await saveTeamImage(buffer, file.type);
 
     if ("error" in result) {
       return NextResponse.json({ error: result.error }, { status: 400 });
     }
 
     if (replaceImage) {
-      deleteTeamImage(replaceImage);
+      await deleteTeamImage(replaceImage);
     }
 
     if (memberId) {
-      const data = readData();
+      const data = await readData();
       const member = data.team.find((m) => m.id === memberId);
       if (member?.image && member.image !== replaceImage) {
-        deleteTeamImage(member.image);
+        await deleteTeamImage(member.image);
       }
-      updateContent("team", memberId, { image: result.url });
+      await updateContent("team", memberId, { image: result.url });
     }
 
     return NextResponse.json({ success: true, url: result.url });

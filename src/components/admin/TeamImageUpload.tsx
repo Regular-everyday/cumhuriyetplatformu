@@ -1,6 +1,4 @@
 "use client";
-
-import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
 interface TeamImageUploadProps {
@@ -67,13 +65,7 @@ export default function TeamImageUpload({
       <div className="flex flex-wrap items-center gap-4">
         <div className="relative h-24 w-24 overflow-hidden rounded-full border-2 border-brand-gold/40 bg-gray-100">
           {preview ? (
-            <Image
-              src={preview}
-              alt="Önizleme"
-              fill
-              className="object-cover"
-              sizes="96px"
-            />
+            <img src={preview} alt="Önizleme" className="h-full w-full object-cover" />
           ) : (
             <div className="flex h-full w-full items-center justify-center text-xs text-gray-400">
               Fotoğraf yok

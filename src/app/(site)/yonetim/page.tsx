@@ -1,9 +1,8 @@
-import Image from "next/image";
 import PageHeader from "@/components/PageHeader";
 import { readData } from "@/lib/db";
 
-export default function YonetimPage() {
-  const data = readData();
+export default async function YonetimPage() {
+  const data = await readData();
 
   return (
     <>
@@ -17,12 +16,10 @@ export default function YonetimPage() {
             <div key={member.id} className="card text-center">
               {member.image ? (
                 <div className="relative mx-auto mb-4 h-28 w-28 overflow-hidden rounded-full border-4 border-brand-gold/40">
-                  <Image
+                  <img
                     src={member.image}
                     alt={member.name}
-                    fill
-                    className="object-cover"
-                    sizes="112px"
+                    className="h-full w-full object-cover"
                   />
                 </div>
               ) : (

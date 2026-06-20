@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    addMember({ adSoyad, telefon, eposta, meslek, yas, ilce });
+    await addMember({ adSoyad, telefon, eposta, meslek, yas, ilce });
 
     return NextResponse.json({ success: true }, { status: 201 });
   } catch {

@@ -4,8 +4,8 @@ import MembershipForm from "@/components/MembershipForm";
 import { readData } from "@/lib/db";
 import { formatDate, KEMALIZM_ILKELERI } from "@/lib/utils";
 
-export default function HomePage() {
-  const data = readData();
+export default async function HomePage() {
+  const data = await readData();
   const activeAnnouncements = data.announcements.filter((a) => a.active);
   const upcomingEvents = [...data.events]
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())

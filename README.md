@@ -15,7 +15,7 @@ Tüm site içeriği `/admin` yönetim panelinden yönetilebilir:
 
 ## Güvenlik
 
-- Şifreler `scrypt` ile hashlenir, düz metin saklanmaz
+- Yönetici şifresi environment variable üzerinden sunucu tarafında doğrulanır
 - HttpOnly + SameSite=strict oturum çerezi
 - HMAC imzalı oturum tokenları
 - Giriş ve üyelik formlarında rate limiting
@@ -30,7 +30,7 @@ Tüm site içeriği `/admin` yönetim panelinden yönetilebilir:
 
 ```bash
 cp .env.example .env
-# .env dosyasında ADMIN_PASSWORD ve SESSION_SECRET değerlerini güçlü değerlerle değiştirin
+# .env dosyasında ADMIN_PASSWORD, SESSION_SECRET ve Supabase değerlerini doldurun
 npm install
 npm run dev
 ```
@@ -44,7 +44,20 @@ Yönetim paneli: `http://localhost:3000/admin`
 
 - `ADMIN_PASSWORD` — en az 12 karakter
 - `SESSION_SECRET` — en az 32 karakter rastgele anahtar
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `SUPABASE_TEAM_IMAGES_BUCKET` — varsayılan `team-images`
+
+## Supabase Kurulumu
+
+`supabase/schema.sql` dosyasını Supabase SQL Editor içinde çalıştırın.
+
+Bu kurulum:
+
+- site içeriğini `site_state` tablosunda tutar
+- ekip fotoğraflarını public `team-images` bucket'ında saklar
+- Vercel üzerinde admin değişikliklerinin kalıcı olmasını sağlar
 
 ## Teknolojiler
 
-- Next.js 15, React 19, TypeScript, Tailwind CSS
+- Next.js 15, React 19, TypeScript, Tailwind CSS, Supabase

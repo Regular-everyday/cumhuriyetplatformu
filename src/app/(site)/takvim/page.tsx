@@ -2,8 +2,8 @@ import PageHeader from "@/components/PageHeader";
 import { readData } from "@/lib/db";
 import { formatDate } from "@/lib/utils";
 
-export default function TakvimPage() {
-  const data = readData();
+export default async function TakvimPage() {
+  const data = await readData();
   const events = [...data.events].sort(
     (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
   );

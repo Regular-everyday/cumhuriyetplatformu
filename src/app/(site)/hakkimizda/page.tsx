@@ -2,8 +2,8 @@ import PageHeader from "@/components/PageHeader";
 import { readData } from "@/lib/db";
 import { KEMALIZM_ILKELERI } from "@/lib/utils";
 
-export default function HakkimizdaPage() {
-  const { about } = readData();
+export default async function HakkimizdaPage() {
+  const { about } = await readData();
 
   return (
     <>

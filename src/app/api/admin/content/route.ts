@@ -113,7 +113,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: "Geçersiz kaynak." }, { status: 400 });
       }
       const sanitized = sanitizeContentData(resource, body.data ?? {});
-      const item = createContent(resource, sanitized);
+      const item = await createContent(resource, sanitized);
       return NextResponse.json({ success: true, item });
     }
 
@@ -126,15 +126,15 @@ export async function POST(request: NextRequest) {
       const sanitized = sanitizeContentData(resource, body.data ?? {});
 
       if (resource === "team") {
-        const data = readData();
+        const data = await readData();
         const existing = data.team.find((m) => m.id === id);
         const newImage = (sanitized as { image?: string }).image;
         if (existing?.image && existing.image !== newImage) {
-          deleteTeamImage(existing.image);
+          await deleteTeamImage(existing.image);
         }
       }
 
-      const item = updateContent(resource, id, sanitized);
+      const item = await updateContent(resource, id, sanitized);
       if (!item) {
         return NextResponse.json({ error: "Kayıt bulunamadı." }, { status: 404 });
       }
@@ -149,14 +149,14 @@ export async function POST(request: NextRequest) {
       }
 
       if (resource === "team") {
-        const data = readData();
+        const data = await readData();
         const existing = data.team.find((m) => m.id === id);
         if (existing?.image) {
-          deleteTeamImage(existing.image);
+          await deleteTeamImage(existing.image);
         }
       }
 
-      const success = deleteContent(resource, id);
+      const success = await deleteContent(resource, id);
       if (!success) {
         return NextResponse.json({ error: "Kayıt bulunamadı." }, { status: 404 });
       }
@@ -169,7 +169,7 @@ export async function POST(request: NextRequest) {
       if (!memberId || !VALID_MEMBER_STATUS.includes(status)) {
         return NextResponse.json({ error: "Geçersiz istek." }, { status: 400 });
       }
-      const success = updateMemberStatus(memberId, status);
+      const success = await updateMemberStatus(memberId, status);
       if (!success) {
         return NextResponse.json({ error: "Üye bulunamadı." }, { status: 404 });
       }
@@ -181,7 +181,7 @@ export async function POST(request: NextRequest) {
       if (!memberId) {
         return NextResponse.json({ error: "Geçersiz istek." }, { status: 400 });
       }
-      const success = deleteMember(memberId);
+      const success = await deleteMember(memberId);
       if (!success) {
         return NextResponse.json({ error: "Üye bulunamadı." }, { status: 404 });
       }
@@ -190,7 +190,7 @@ export async function POST(request: NextRequest) {
 
     if (action === "updateSettings") {
       const settings = body.settings ?? {};
-      const updated = updateSettings({
+      const updated = await updateSettings({
         liveAnnouncement: sanitizeText(settings.liveAnnouncement, 300),
         contactEmail: sanitizeEmail(settings.contactEmail),
         contactPhone: sanitizePhone(settings.contactPhone),
@@ -206,7 +206,7 @@ export async function POST(request: NextRequest) {
       const activities = Array.isArray(about.activities)
         ? about.activities.map((a: unknown) => sanitizeText(a, 200)).filter(Boolean)
         : undefined;
-      const updated = updateAbout({
+      const updated = await updateAbout({
         mission: sanitizeText(about.mission, 3000),
         vision: sanitizeText(about.vision, 3000),
         activities,

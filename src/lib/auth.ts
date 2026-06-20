@@ -1,17 +1,9 @@
 import crypto from "crypto";
-import fs from "fs";
-import path from "path";
 import { cookies } from "next/headers";
 import type { NextRequest } from "next/server";
 
-const DATA_DIR = path.join(process.cwd(), "data");
-const ADMIN_FILE = path.join(DATA_DIR, "admin.json");
 const SESSION_COOKIE = "mcp_session";
 const SESSION_DURATION_MS = 8 * 60 * 60 * 1000;
-
-interface AdminStore {
-  passwordHash: string;
-}
 
 function getSessionSecret(): string {
   const secret = process.env.SESSION_SECRET;
@@ -24,54 +16,26 @@ function getSessionSecret(): string {
   return secret;
 }
 
-function hashPassword(password: string): string {
-  const salt = crypto.randomBytes(16).toString("hex");
-  const hash = crypto.scryptSync(password, salt, 64).toString("hex");
-  return `${salt}:${hash}`;
-}
-
-function verifyPassword(password: string, stored: string): boolean {
-  try {
-    const [salt, hash] = stored.split(":");
-    if (!salt || !hash) return false;
-    const verifyHash = crypto.scryptSync(password, salt, 64).toString("hex");
-    const hashBuf = Buffer.from(hash, "hex");
-    const verifyBuf = Buffer.from(verifyHash, "hex");
-    if (hashBuf.length !== verifyBuf.length) return false;
-    return crypto.timingSafeEqual(hashBuf, verifyBuf);
-  } catch {
-    return false;
-  }
-}
-
-function ensureAdminFile(): AdminStore {
-  if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
-  }
-
-  if (fs.existsSync(ADMIN_FILE)) {
-    return JSON.parse(fs.readFileSync(ADMIN_FILE, "utf-8")) as AdminStore;
-  }
-
+function getAdminPassword(): string {
   const adminPassword = process.env.ADMIN_PASSWORD;
   if (!adminPassword || adminPassword.length < 12) {
     if (process.env.NODE_ENV === "production") {
       throw new Error("ADMIN_PASSWORD ortam değişkeni en az 12 karakter olmalıdır.");
     }
-    const fallback = "admin12345678";
-    const store: AdminStore = { passwordHash: hashPassword(fallback) };
-    fs.writeFileSync(ADMIN_FILE, JSON.stringify(store, null, 2), "utf-8");
-    return store;
+    return "admin12345678";
   }
+  return adminPassword;
+}
 
-  const store: AdminStore = { passwordHash: hashPassword(adminPassword) };
-  fs.writeFileSync(ADMIN_FILE, JSON.stringify(store, null, 2), "utf-8");
-  return store;
+function timingSafeEqualText(a: string, b: string): boolean {
+  const aBuf = Buffer.from(a, "utf-8");
+  const bBuf = Buffer.from(b, "utf-8");
+  if (aBuf.length !== bBuf.length) return false;
+  return crypto.timingSafeEqual(aBuf, bBuf);
 }
 
 export function validateAdminPassword(password: string): boolean {
-  const store = ensureAdminFile();
-  return verifyPassword(password, store.passwordHash);
+  return timingSafeEqualText(password, getAdminPassword());
 }
 
 export function createSessionToken(): string {

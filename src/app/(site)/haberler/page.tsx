@@ -2,8 +2,8 @@ import PageHeader from "@/components/PageHeader";
 import { readData } from "@/lib/db";
 import { formatDate } from "@/lib/utils";
 
-export default function HaberlerPage() {
-  const data = readData();
+export default async function HaberlerPage() {
+  const data = await readData();
   const news = [...data.news].sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
   );

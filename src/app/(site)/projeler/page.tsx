@@ -7,8 +7,8 @@ const statusLabels = {
   planlaniyor: { label: "Planlanıyor", color: "bg-yellow-100 text-yellow-800" },
 };
 
-export default function ProjelerPage() {
-  const data = readData();
+export default async function ProjelerPage() {
+  const data = await readData();
 
   return (
     <>

@@ -6,6 +6,6 @@ export async function GET(request: NextRequest) {
   const guard = requireAdmin(request);
   if (guard) return guard;
 
-  const data = readData();
+  const data = await readData();
   return NextResponse.json(data);
 }

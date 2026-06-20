@@ -2,8 +2,8 @@ import PageHeader from "@/components/PageHeader";
 import { readData } from "@/lib/db";
 import { formatDate } from "@/lib/utils";
 
-export default function YayinlarPage() {
-  const data = readData();
+export default async function YayinlarPage() {
+  const data = await readData();
 
   return (
     <>

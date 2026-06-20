@@ -15,9 +15,11 @@ import type {
   TeamMember,
 } from "./types";
 import { sanitizeId } from "./sanitize";
+import { getSupabaseAdmin, isSupabaseConfigured } from "./supabase";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const DATA_FILE = path.join(DATA_DIR, "site.json");
+const SITE_STATE_ID = "site";
 
 const defaultAbout: AboutContent = {
   mission:
@@ -44,7 +46,7 @@ const defaultSettings: SiteSettings = {
     "Cumhuriyet değerlerini korumak, yaşatmak ve gelecek nesillere aktarmak için bir araya geldik.",
 };
 
-const defaultData: SiteData = {
+export const defaultData: SiteData = {
   announcements: [
     {
       id: "1",
@@ -96,7 +98,8 @@ const defaultData: SiteData = {
     {
       id: "2",
       title: "İlk Genel Kurul Toplantısı Yapıldı",
-      excerpt: "Platformun ilk genel kurul toplantısı yoğun katılımla gerçekleşti.",
+      excerpt:
+        "Platformun ilk genel kurul toplantısı yoğun katılımla gerçekleşti.",
       content:
         "Mersin Cumhuriyet Platformu'nun ilk genel kurul toplantısı büyük bir katılımla gerçekleştirildi.",
       date: "2026-05-20",
@@ -218,7 +221,7 @@ function migrateData(data: Partial<SiteData>): SiteData {
   };
 }
 
-function ensureDataFile(): void {
+function ensureLocalDataFile(): void {
   if (!fs.existsSync(DATA_DIR)) {
     fs.mkdirSync(DATA_DIR, { recursive: true });
   }
@@ -227,25 +230,77 @@ function ensureDataFile(): void {
   }
 }
 
-export function readData(): SiteData {
-  ensureDataFile();
+function readLocalData(): SiteData {
+  ensureLocalDataFile();
   const raw = fs.readFileSync(DATA_FILE, "utf-8");
   return migrateData(JSON.parse(raw) as Partial<SiteData>);
 }
 
-export function writeData(data: SiteData): void {
-  ensureDataFile();
+function writeLocalData(data: SiteData): void {
+  ensureLocalDataFile();
   fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), "utf-8");
+}
+
+async function readSupabaseData(): Promise<SiteData> {
+  const supabase = getSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("site_state")
+    .select("site_data")
+    .eq("id", SITE_STATE_ID)
+    .maybeSingle();
+
+  if (error) {
+    throw new Error(`Supabase veri okuma hatasi: ${error.message}`);
+  }
+
+  if (!data?.site_data) {
+    const fallback = migrateData(defaultData);
+    await writeSupabaseData(fallback);
+    return fallback;
+  }
+
+  return migrateData(data.site_data as Partial<SiteData>);
+}
+
+async function writeSupabaseData(data: SiteData): Promise<void> {
+  const supabase = getSupabaseAdmin();
+  const { error } = await supabase.from("site_state").upsert(
+    {
+      id: SITE_STATE_ID,
+      site_data: data,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: "id" }
+  );
+
+  if (error) {
+    throw new Error(`Supabase veri yazma hatasi: ${error.message}`);
+  }
+}
+
+export async function readData(): Promise<SiteData> {
+  if (isSupabaseConfigured()) {
+    return readSupabaseData();
+  }
+  return readLocalData();
+}
+
+export async function writeData(data: SiteData): Promise<void> {
+  if (isSupabaseConfigured()) {
+    await writeSupabaseData(data);
+    return;
+  }
+  writeLocalData(data);
 }
 
 export function generateId(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 }
 
-export function addMember(
+export async function addMember(
   application: Omit<MembershipApplication, "id" | "createdAt" | "status">
-): MembershipApplication {
-  const data = readData();
+): Promise<MembershipApplication> {
+  const data = await readData();
   const newMember: MembershipApplication = {
     ...application,
     id: generateId(),
@@ -253,42 +308,46 @@ export function addMember(
     status: "beklemede",
   };
   data.members.push(newMember);
-  writeData(data);
+  await writeData(data);
   return newMember;
 }
 
-export function updateMemberStatus(
+export async function updateMemberStatus(
   id: string,
   status: MembershipApplication["status"]
-): boolean {
-  const data = readData();
+): Promise<boolean> {
+  const data = await readData();
   const member = data.members.find((m) => m.id === id);
   if (!member) return false;
   member.status = status;
-  writeData(data);
+  await writeData(data);
   return true;
 }
 
-export function deleteMember(id: string): boolean {
-  const data = readData();
+export async function deleteMember(id: string): Promise<boolean> {
+  const data = await readData();
   const index = data.members.findIndex((m) => m.id === sanitizeId(id));
   if (index === -1) return false;
   data.members.splice(index, 1);
-  writeData(data);
+  await writeData(data);
   return true;
 }
 
-export function updateSettings(settings: Partial<SiteSettings>): SiteSettings {
-  const data = readData();
+export async function updateSettings(
+  settings: Partial<SiteSettings>
+): Promise<SiteSettings> {
+  const data = await readData();
   data.settings = { ...data.settings, ...settings };
-  writeData(data);
+  await writeData(data);
   return data.settings;
 }
 
-export function updateAbout(about: Partial<AboutContent>): AboutContent {
-  const data = readData();
+export async function updateAbout(
+  about: Partial<AboutContent>
+): Promise<AboutContent> {
+  const data = await readData();
   data.about = { ...data.about, ...about };
-  writeData(data);
+  await writeData(data);
   return data.about;
 }
 
@@ -301,37 +360,40 @@ type ContentItem =
   | Publication
   | TeamMember;
 
-export function createContent(
+export async function createContent(
   resource: ContentResource,
   item: Omit<ContentItem, "id">
-): ContentItem {
-  const data = readData();
+): Promise<ContentItem> {
+  const data = await readData();
   const newItem = { ...item, id: generateId() } as ContentItem;
   (data[resource] as ContentItem[]).push(newItem);
-  writeData(data);
+  await writeData(data);
   return newItem;
 }
 
-export function updateContent(
+export async function updateContent(
   resource: ContentResource,
   id: string,
   updates: Partial<ContentItem>
-): ContentItem | null {
-  const data = readData();
+): Promise<ContentItem | null> {
+  const data = await readData();
   const items = data[resource] as ContentItem[];
   const index = items.findIndex((item) => item.id === sanitizeId(id));
   if (index === -1) return null;
   items[index] = { ...items[index], ...updates, id: items[index].id };
-  writeData(data);
+  await writeData(data);
   return items[index];
 }
 
-export function deleteContent(resource: ContentResource, id: string): boolean {
-  const data = readData();
+export async function deleteContent(
+  resource: ContentResource,
+  id: string
+): Promise<boolean> {
+  const data = await readData();
   const items = data[resource] as ContentItem[];
   const index = items.findIndex((item) => item.id === sanitizeId(id));
   if (index === -1) return false;
   items.splice(index, 1);
-  writeData(data);
+  await writeData(data);
   return true;
 }

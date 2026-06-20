@@ -1,8 +1,8 @@
 import PageHeader from "@/components/PageHeader";
 import { readData } from "@/lib/db";
 
-export default function IletisimPage() {
-  const { settings } = readData();
+export default async function IletisimPage() {
+  const { settings } = await readData();
 
   return (
     <>
