@@ -6,6 +6,8 @@ interface TeamImageUploadProps {
   memberId?: string;
   onUploaded: (url: string) => void;
   onRemoved: () => void;
+  label?: string;
+  shape?: "round" | "square";
 }
 
 export default function TeamImageUpload({
@@ -13,6 +15,8 @@ export default function TeamImageUpload({
   memberId,
   onUploaded,
   onRemoved,
+  label = "Fotoğraf",
+  shape = "round",
 }: TeamImageUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
@@ -61,9 +65,13 @@ export default function TeamImageUpload({
 
   return (
     <div className="sm:col-span-2">
-      <label className="mb-2 block text-sm font-medium text-gray-700">Fotoğraf</label>
+      <label className="mb-2 block text-sm font-medium text-gray-700">{label}</label>
       <div className="flex flex-wrap items-center gap-4">
-        <div className="relative h-24 w-24 overflow-hidden rounded-full border-2 border-brand-gold/40 bg-gray-100">
+        <div
+          className={`relative overflow-hidden border-2 border-brand-gold/40 bg-gray-100 ${
+            shape === "round" ? "h-24 w-24 rounded-full" : "h-24 w-36 rounded-xl"
+          }`}
+        >
           {preview ? (
             <img src={preview} alt="Önizleme" className="h-full w-full object-cover" />
           ) : (

@@ -44,3 +44,4 @@ public/uploads/team/*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+.vercel

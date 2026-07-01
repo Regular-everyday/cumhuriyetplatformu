@@ -25,15 +25,22 @@ export default async function EtkinliklerPage() {
                   isPast ? "opacity-70" : ""
                 }`}
               >
-                <div className="flex h-20 w-20 shrink-0 flex-col items-center justify-center rounded-xl bg-brand-red text-white">
-                  <span className="text-2xl font-bold">
-                    {new Date(event.date).getDate()}
-                  </span>
-                  <span className="text-xs uppercase">
-                    {new Date(event.date).toLocaleDateString("tr-TR", {
-                      month: "short",
-                    })}
-                  </span>
+                <div className="flex shrink-0 gap-3">
+                  <div className="flex h-20 w-20 shrink-0 flex-col items-center justify-center rounded-xl bg-brand-red text-white">
+                    <span className="text-2xl font-bold">
+                      {new Date(event.date).getDate()}
+                    </span>
+                    <span className="text-xs uppercase">
+                      {new Date(event.date).toLocaleDateString("tr-TR", {
+                        month: "short",
+                      })}
+                    </span>
+                  </div>
+                  {event.image && (
+                    <div className="relative h-20 w-28 shrink-0 overflow-hidden rounded-xl">
+                      <img src={event.image} alt={event.title} className="h-full w-full object-cover" />
+                    </div>
+                  )}
                 </div>
                 <div className="flex-1">
                   <div className="flex flex-wrap items-center gap-2">

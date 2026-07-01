@@ -11,6 +11,14 @@ const SECURITY_HEADERS: Record<string, string> = {
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const response = NextResponse.next();
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const allowedImgSources = ["'self'", "data:", "blob:", "https:"];
+  const allowedConnectSources = ["'self'"];
+
+  if (supabaseUrl) {
+    allowedImgSources.push(supabaseUrl);
+    allowedConnectSources.push(supabaseUrl);
+  }
 
   for (const [key, value] of Object.entries(SECURITY_HEADERS)) {
     response.headers.set(key, value);
@@ -29,9 +37,9 @@ export function middleware(request: NextRequest) {
       "default-src 'self'",
       "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
       "style-src 'self' 'unsafe-inline'",
-      "img-src 'self' data: blob:",
+      `img-src ${allowedImgSources.join(" ")}`,
       "font-src 'self' data:",
-      "connect-src 'self'",
+      `connect-src ${allowedConnectSources.join(" ")}`,
       "frame-ancestors 'none'",
       "base-uri 'self'",
       "form-action 'self'",

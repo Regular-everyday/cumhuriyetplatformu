@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import type { MembershipApplication, SiteData } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
 import { adminFetch, loadAdminData } from "./useAdminApi";
+import MarkdownTextarea from "./MarkdownTextarea";
 import TeamImageUpload from "./TeamImageUpload";
 
 type Tab =
@@ -352,7 +353,7 @@ function AnnouncementsManager({
 }
 
 function EventsManager({ data, onAction }: { data: SiteData; onAction: ActionFn }) {
-  const empty = { title: "", description: "", date: "", location: "" };
+  const empty = { title: "", description: "", date: "", location: "", image: "" };
   const [form, setForm] = useState(empty);
   const [editing, setEditing] = useState<string | null>(null);
 
@@ -361,10 +362,25 @@ function EventsManager({ data, onAction }: { data: SiteData; onAction: ActionFn 
     set: (v: typeof empty) => void
   ) => (
     <div className="grid gap-3 sm:grid-cols-2">
+      <TeamImageUpload
+        image={f.image || undefined}
+        onUploaded={(url) => set({ ...f, image: url })}
+        onRemoved={() => set({ ...f, image: "" })}
+        label="Etkinlik Görseli"
+        shape="square"
+      />
       <input className={inputClass} placeholder="Başlık" value={f.title} onChange={(e) => set({ ...f, title: e.target.value })} />
       <input className={inputClass} type="date" value={f.date} onChange={(e) => set({ ...f, date: e.target.value })} />
       <input className={inputClass} placeholder="Konum" value={f.location} onChange={(e) => set({ ...f, location: e.target.value })} />
-      <textarea className={`${inputClass} sm:col-span-2`} rows={2} placeholder="Açıklama" value={f.description} onChange={(e) => set({ ...f, description: e.target.value })} />
+      <div className="sm:col-span-2">
+        <label className="mb-1 block text-xs font-semibold text-gray-500">Etkinlik Açıklaması</label>
+        <MarkdownTextarea
+          placeholder="Etkinlik açıklaması..."
+          value={f.description}
+          onChange={(val) => set({ ...f, description: val })}
+          rows={3}
+        />
+      </div>
     </div>
   );
 
@@ -381,13 +397,18 @@ function EventsManager({ data, onAction }: { data: SiteData; onAction: ActionFn 
       <ItemList
         items={data.events}
         render={(e) => (
-          <div>
-            <p className="font-bold">{e.title}</p>
-            <p className="text-sm text-gray-600">{e.description}</p>
-            <p className="mt-1 text-xs text-gray-400">{formatDate(e.date)} — {e.location}</p>
+          <div className="flex items-center gap-4">
+            {e.image && (
+              <img src={e.image} alt={e.title} className="h-12 w-12 shrink-0 rounded object-cover" />
+            )}
+            <div>
+              <p className="font-bold">{e.title}</p>
+              <p className="text-sm text-gray-600">{e.description}</p>
+              <p className="mt-1 text-xs text-gray-400">{formatDate(e.date)} — {e.location}</p>
+            </div>
           </div>
         )}
-        onEdit={(e) => { setEditing(e.id); setForm({ title: e.title, description: e.description, date: e.date, location: e.location }); }}
+        onEdit={(e) => { setEditing(e.id); setForm({ title: e.title, description: e.description, date: e.date, location: e.location, image: e.image || "" }); }}
         onDelete={(id) => onAction("delete", { resource: "events", id }, "Silindi.")}
         editing={editing}
         onSaveEdit={() => {
@@ -404,16 +425,31 @@ function EventsManager({ data, onAction }: { data: SiteData; onAction: ActionFn 
 }
 
 function NewsManager({ data, onAction }: { data: SiteData; onAction: ActionFn }) {
-  const empty = { title: "", excerpt: "", content: "", date: new Date().toISOString().slice(0, 10) };
+  const empty = { title: "", excerpt: "", content: "", date: new Date().toISOString().slice(0, 10), image: "" };
   const [form, setForm] = useState(empty);
   const [editing, setEditing] = useState<string | null>(null);
 
   const fields = (f: typeof empty, set: (v: typeof empty) => void) => (
     <div className="space-y-3">
+      <TeamImageUpload
+        image={f.image || undefined}
+        onUploaded={(url) => set({ ...f, image: url })}
+        onRemoved={() => set({ ...f, image: "" })}
+        label="Haber Görseli"
+        shape="square"
+      />
       <input className={inputClass} placeholder="Başlık" value={f.title} onChange={(e) => set({ ...f, title: e.target.value })} />
       <input className={inputClass} type="date" value={f.date} onChange={(e) => set({ ...f, date: e.target.value })} />
       <input className={inputClass} placeholder="Özet" value={f.excerpt} onChange={(e) => set({ ...f, excerpt: e.target.value })} />
-      <textarea className={inputClass} rows={4} placeholder="İçerik" value={f.content} onChange={(e) => set({ ...f, content: e.target.value })} />
+      <div>
+        <label className="mb-1 block text-xs font-semibold text-gray-500">Haber İçeriği</label>
+        <MarkdownTextarea
+          placeholder="Haber detaylı içeriği..."
+          value={f.content}
+          onChange={(val) => set({ ...f, content: val })}
+          rows={6}
+        />
+      </div>
     </div>
   );
 
@@ -430,13 +466,18 @@ function NewsManager({ data, onAction }: { data: SiteData; onAction: ActionFn })
       <ItemList
         items={data.news}
         render={(n) => (
-          <div>
-            <p className="font-bold">{n.title}</p>
-            <p className="text-sm text-gray-600">{n.excerpt}</p>
-            <p className="mt-1 text-xs text-gray-400">{formatDate(n.date)}</p>
+          <div className="flex items-center gap-4">
+            {n.image && (
+              <img src={n.image} alt={n.title} className="h-12 w-12 shrink-0 rounded object-cover" />
+            )}
+            <div>
+              <p className="font-bold">{n.title}</p>
+              <p className="text-sm text-gray-600">{n.excerpt}</p>
+              <p className="mt-1 text-xs text-gray-400">{formatDate(n.date)}</p>
+            </div>
           </div>
         )}
-        onEdit={(n) => { setEditing(n.id); setForm({ title: n.title, excerpt: n.excerpt, content: n.content, date: n.date }); }}
+        onEdit={(n) => { setEditing(n.id); setForm({ title: n.title, excerpt: n.excerpt, content: n.content, date: n.date, image: n.image || "" }); }}
         onDelete={(id) => onAction("delete", { resource: "news", id }, "Silindi.")}
         editing={editing}
         onSaveEdit={() => {
@@ -453,18 +494,34 @@ function NewsManager({ data, onAction }: { data: SiteData; onAction: ActionFn })
 }
 
 function ProjectsManager({ data, onAction }: { data: SiteData; onAction: ActionFn }) {
-  const empty: { title: string; description: string; status: SiteData["projects"][number]["status"] } = {
+  const empty = {
     title: "",
     description: "",
-    status: "planlaniyor",
+    status: "planlaniyor" as SiteData["projects"][number]["status"],
+    image: "",
   };
   const [form, setForm] = useState(empty);
   const [editing, setEditing] = useState<string | null>(null);
 
   const fields = (f: typeof empty, set: (v: typeof empty) => void) => (
     <div className="space-y-3">
+      <TeamImageUpload
+        image={f.image || undefined}
+        onUploaded={(url) => set({ ...f, image: url })}
+        onRemoved={() => set({ ...f, image: "" })}
+        label="Proje Görseli"
+        shape="square"
+      />
       <input className={inputClass} placeholder="Proje adı" value={f.title} onChange={(e) => set({ ...f, title: e.target.value })} />
-      <textarea className={inputClass} rows={2} placeholder="Açıklama" value={f.description} onChange={(e) => set({ ...f, description: e.target.value })} />
+      <div>
+        <label className="mb-1 block text-xs font-semibold text-gray-500">Proje Açıklaması</label>
+        <MarkdownTextarea
+          placeholder="Proje detayları..."
+          value={f.description}
+          onChange={(val) => set({ ...f, description: val })}
+          rows={3}
+        />
+      </div>
       <select className={inputClass} value={f.status} onChange={(e) => set({ ...f, status: e.target.value as typeof f.status })}>
         <option value="planlaniyor">Planlanıyor</option>
         <option value="devam-ediyor">Devam Ediyor</option>
@@ -483,13 +540,18 @@ function ProjectsManager({ data, onAction }: { data: SiteData; onAction: ActionF
       <ItemList
         items={data.projects}
         render={(p) => (
-          <div>
-            <p className="font-bold">{p.title}</p>
-            <p className="text-sm text-gray-600">{p.description}</p>
-            <span className="mt-1 inline-block rounded-full bg-gray-100 px-2 py-0.5 text-xs">{p.status}</span>
+          <div className="flex items-center gap-4">
+            {p.image && (
+              <img src={p.image} alt={p.title} className="h-12 w-12 shrink-0 rounded object-cover" />
+            )}
+            <div>
+              <p className="font-bold">{p.title}</p>
+              <p className="text-sm text-gray-600">{p.description}</p>
+              <span className="mt-1 inline-block rounded-full bg-gray-100 px-2 py-0.5 text-xs">{p.status}</span>
+            </div>
           </div>
         )}
-        onEdit={(p) => { setEditing(p.id); setForm({ title: p.title, description: p.description, status: p.status }); }}
+        onEdit={(p) => { setEditing(p.id); setForm({ title: p.title, description: p.description, status: p.status, image: p.image || "" }); }}
         onDelete={(id) => onAction("delete", { resource: "projects", id }, "Silindi.")}
         editing={editing}
         onSaveEdit={() => {

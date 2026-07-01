@@ -22,6 +22,11 @@ export default async function ProjelerPage() {
             const status = statusLabels[project.status];
             return (
               <div key={project.id} className="card">
+                {project.image && (
+                  <div className="relative mb-4 h-44 w-full overflow-hidden rounded-xl">
+                    <img src={project.image} alt={project.title} className="h-full w-full object-cover" />
+                  </div>
+                )}
                 <span
                   className={`inline-block rounded-full px-3 py-1 text-xs font-semibold ${status.color}`}
                 >

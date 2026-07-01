@@ -4,6 +4,15 @@ import MembershipForm from "@/components/MembershipForm";
 import { readData } from "@/lib/db";
 import { formatDate, KEMALIZM_ILKELERI } from "@/lib/utils";
 
+function stripMarkdown(text: string): string {
+  if (!text) return "";
+  return text
+    .replace(/!\[.*?\]\(.*?\)/g, "")
+    .replace(/\[(.*?)\]\(.*?\)/g, "$1")
+    .replace(/[*#`_\-~>]/g, "")
+    .trim();
+}
+
 export default async function HomePage() {
   const data = await readData();
   const activeAnnouncements = data.announcements.filter((a) => a.active);
@@ -114,27 +123,38 @@ export default async function HomePage() {
           </div>
           <div className="grid gap-6 md:grid-cols-3">
             {upcomingEvents.map((event) => (
-              <div key={event.id} className="card group">
-                <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-brand-red/10 px-3 py-1 text-sm font-medium text-brand-red">
-                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                  {formatDate(event.date)}
+              <Link key={event.id} href="/etkinlikler" className="card group flex flex-col justify-between transition-shadow hover:shadow-lg">
+                <div>
+                  {event.image && (
+                    <div className="relative mb-4 h-40 w-full overflow-hidden rounded-lg">
+                      <img
+                        src={event.image}
+                        alt={event.title}
+                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      />
+                    </div>
+                  )}
+                  <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-brand-red/10 px-3 py-1 text-sm font-medium text-brand-red">
+                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    {formatDate(event.date)}
+                  </div>
+                  <h3 className="text-lg font-bold text-gray-900 group-hover:text-brand-red dark:text-gray-100 dark:group-hover:text-brand-gold">
+                    {event.title}
+                  </h3>
+                  <p className="mt-2 line-clamp-2 text-sm text-gray-600 dark:text-gray-400">
+                    {event.description}
+                  </p>
+                  <p className="mt-3 flex items-center gap-1 text-sm text-brand-gold">
+                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    {event.location}
+                  </p>
                 </div>
-                <h3 className="text-lg font-bold text-gray-900 group-hover:text-brand-red dark:text-gray-100 dark:group-hover:text-brand-gold">
-                  {event.title}
-                </h3>
-                <p className="mt-2 text-sm text-gray-600 line-clamp-2 dark:text-gray-400">
-                  {event.description}
-                </p>
-                <p className="mt-3 flex items-center gap-1 text-sm text-brand-gold">
-                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                  {event.location}
-                </p>
-              </div>
+              </Link>
             ))}
           </div>
           <div className="mt-6 text-center sm:hidden">
@@ -162,20 +182,34 @@ export default async function HomePage() {
           </div>
           <div className="grid gap-6 md:grid-cols-3">
             {latestNews.map((item) => (
-              <article key={item.id} className="card group">
-                <div className="mb-3 h-1 w-12 rounded-full bg-brand-gold" />
-                <time className="text-sm text-gray-500 dark:text-gray-400">{formatDate(item.date)}</time>
-                <h3 className="mt-2 text-lg font-bold text-gray-900 group-hover:text-brand-red dark:text-gray-100 dark:group-hover:text-brand-gold">
-                  {item.title}
-                </h3>
-                <p className="mt-2 text-sm text-gray-600 line-clamp-3 dark:text-gray-400">{item.excerpt}</p>
-                <Link
-                  href={`/haberler#${item.id}`}
-                  className="mt-4 inline-block text-sm font-semibold text-brand-red hover:underline"
-                >
+              <Link
+                key={item.id}
+                href={`/haberler/${item.id}`}
+                className="card group flex flex-col justify-between transition-shadow hover:shadow-lg"
+              >
+                <div>
+                  {item.image && (
+                    <div className="relative mb-4 h-40 w-full overflow-hidden rounded-lg">
+                      <img
+                        src={item.image}
+                        alt={item.title}
+                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      />
+                    </div>
+                  )}
+                  <div className="mb-3 h-1 w-12 rounded-full bg-brand-gold" />
+                  <time className="text-sm text-gray-500 dark:text-gray-400">{formatDate(item.date)}</time>
+                  <h3 className="mt-2 text-lg font-bold text-gray-900 group-hover:text-brand-red dark:text-gray-100 dark:group-hover:text-brand-gold">
+                    {item.title}
+                  </h3>
+                  <p className="mt-2 line-clamp-3 text-sm text-gray-600 dark:text-gray-400">
+                    {stripMarkdown(item.excerpt || item.content)}
+                  </p>
+                </div>
+                <span className="mt-4 inline-block text-sm font-semibold text-brand-red group-hover:underline">
                   Devamını Oku →
-                </Link>
-              </article>
+                </span>
+              </Link>
             ))}
           </div>
         </div>

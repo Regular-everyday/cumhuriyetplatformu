@@ -42,9 +42,14 @@ export default function Header() {
 
         <div className="flex items-center gap-2 sm:gap-3">
           <ThemeToggle />
-          <Link href="/uyelik" className="btn-primary hidden text-sm md:inline-flex">
-            Üye Ol
-          </Link>
+          <div className="hidden items-center rounded-lg border border-gray-200 bg-gray-50 p-0.5 dark:border-gray-700 dark:bg-gray-800 md:flex">
+            <Link
+              href="/uyelik"
+              className="flex h-8 items-center justify-center rounded-md bg-white px-4 text-sm font-semibold text-brand-red shadow-sm transition-all hover:text-brand-red-light dark:bg-brand-gold dark:text-brand-red dark:hover:bg-brand-gold-light"
+            >
+              Üye Ol
+            </Link>
+          </div>
           <button
             type="button"
             className="rounded-lg p-2 text-brand-red lg:hidden"

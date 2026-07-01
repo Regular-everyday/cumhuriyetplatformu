@@ -51,7 +51,7 @@ function sanitizeContentData(resource: ContentResource, data: Record<string, unk
         description: sanitizeText(data.description, 2000),
         date: sanitizeText(data.date, 20),
         location: sanitizeText(data.location, 200),
-        image: sanitizeUrl(data.image) || undefined,
+        image: data.image === "" ? undefined : sanitizeImagePath(data.image) || undefined,
       };
     case "news":
       return {
@@ -59,7 +59,7 @@ function sanitizeContentData(resource: ContentResource, data: Record<string, unk
         excerpt: sanitizeText(data.excerpt, 500),
         content: sanitizeText(data.content, 10000),
         date: sanitizeText(data.date, 20),
-        image: sanitizeUrl(data.image) || undefined,
+        image: data.image === "" ? undefined : sanitizeImagePath(data.image) || undefined,
       };
     case "projects":
       return {
@@ -70,7 +70,7 @@ function sanitizeContentData(resource: ContentResource, data: Record<string, unk
         )
           ? (data.status as "devam-ediyor" | "tamamlandi" | "planlaniyor")
           : "planlaniyor",
-        image: sanitizeUrl(data.image) || undefined,
+        image: data.image === "" ? undefined : sanitizeImagePath(data.image) || undefined,
       };
     case "press":
       return {

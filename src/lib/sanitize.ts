@@ -38,12 +38,12 @@ export function sanitizeId(input: unknown): string {
 
 export function sanitizeImagePath(input: unknown): string {
   const value = sanitizeText(input, 512);
-  if (/^\/uploads\/team\/[a-zA-Z0-9_-]+\.(jpg|jpeg|png|webp)$/.test(value)) {
+  if (/^\/uploads\/[a-zA-Z0-9_/-]+\.(jpg|jpeg|png|webp)$/.test(value)) {
     return value;
   }
 
   const url = sanitizeUrl(value);
-  if (url && /\/storage\/v1\/object\/public\/.+\/team\/.+\.(jpg|jpeg|png|webp)$/i.test(url)) {
+  if (url && /\/storage\/v1\/object\/public\/.+\/.+\.(jpg|jpeg|png|webp)$/i.test(url)) {
     return url;
   }
 

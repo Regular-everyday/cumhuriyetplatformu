@@ -14,7 +14,7 @@
 
 @layer components {
   .btn-primary {
-    @apply inline-flex items-center justify-center rounded-lg bg-brand-red px-6 py-3 font-semibold text-white transition-all hover:bg-brand-red-light hover:shadow-lg;
+    @apply inline-flex items-center justify-center rounded-lg bg-brand-red px-6 py-3 font-semibold text-white transition-all hover:bg-brand-red-light hover:shadow-lg dark:bg-brand-gold dark:text-brand-red dark:hover:bg-brand-gold-light;
   }
 
   .btn-secondary {
@@ -52,13 +52,13 @@
 
 @keyframes marquee {
   0% {
-    transform: translateX(100%);
+    transform: translateX(0%);
   }
   100% {
-    transform: translateX(-100%);
+    transform: translateX(-50%);
   }
 }
 
 .animate-marquee {
-  animation: marquee 25s linear infinite;
+  animation: marquee 40s linear infinite;
 }
